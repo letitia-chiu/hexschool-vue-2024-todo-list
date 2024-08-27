@@ -1,8 +1,9 @@
 <script setup>
 import SideBanner from '@/components/SideBanner.vue'
 import { computed, ref } from 'vue'
-import validator from '@/utils/validator'
+import { errorHandler, Toast, validator } from '@/utils'
 import { useRouter } from 'vue-router'
+import api from '@/api'
 
 const router = useRouter()
 
@@ -13,6 +14,7 @@ const registerInput = ref({
   confirmPassword: ''
 })
 
+// 輸入表單驗證
 const isValid = computed(() => {
   const input = registerInput.value
   return {
@@ -22,15 +24,18 @@ const isValid = computed(() => {
     confirmPassword: input.confirmPassword === input.password
   }
 })
-
 const inputIncompleted = computed(() => {
   return Object.values(isValid.value).includes(false)
 })
 
-const handleRegister = () => {
-  console.log(registerInput.value)
-  alert('註冊成功')
-  router.push('/login')
+const handleRegister = async () => {
+  try {
+    await api.users.signup(registerInput.value)
+    Toast('success', '註冊成功！')
+    router.push('/login')
+  } catch (error) {
+    errorHandler(error)
+  }
 }
 
 </script>

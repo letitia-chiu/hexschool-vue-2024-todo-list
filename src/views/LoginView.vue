@@ -2,7 +2,7 @@
 import SideBanner from '@/components/SideBanner.vue'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import validator from '@/utils/validator'
+import { validator } from '@/utils'
 
 const router = useRouter()
 
@@ -11,6 +11,7 @@ const loginInput = ref({
   password: ''
 })
 
+// 表單輸入驗證
 const isValid = computed(() => {
   const input = loginInput.value
   return {
@@ -18,12 +19,11 @@ const isValid = computed(() => {
     password: validator(input.password, 'password')
   }
 })
-
 const inputIncompleted = computed(() => {
   return Object.values(isValid.value).includes(false)
 })
 
-const handleLogin = () => {
+const handleLogin = async () => {
   console.log(loginInput.value)
   alert('登入成功')
   router.push('/todo')
