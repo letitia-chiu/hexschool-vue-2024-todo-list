@@ -2,9 +2,11 @@
 import SideBanner from '@/components/SideBanner.vue'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { validator } from '@/utils'
+import { errorHandler, Toast, validator } from '@/utils'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const loginInput = ref({
   email: '',
@@ -24,9 +26,13 @@ const inputIncompleted = computed(() => {
 })
 
 const handleLogin = async () => {
-  console.log(loginInput.value)
-  alert('登入成功')
-  router.push('/todo')
+  try {
+    await authStore.login(loginInput.value)
+    Toast('success', '登入成功')
+    router.push('/todo')
+  } catch (error) {
+    errorHandler(error)
+  }
 }
 </script>
 
@@ -59,7 +65,14 @@ const handleLogin = async () => {
             required
           />
           <span v-if="!isValid.password">請正確輸入密碼</span>
-          <button type="button" class="formControls_btnSubmit" @click="handleLogin" :disabled="inputIncompleted">登入</button>
+          <button
+            type="button"
+            class="formControls_btnSubmit"
+            @click="handleLogin"
+            :disabled="inputIncompleted"
+          >
+            登入
+          </button>
           <router-link to="/register" class="formControls_btnLink">註冊帳號</router-link>
         </form>
       </div>
