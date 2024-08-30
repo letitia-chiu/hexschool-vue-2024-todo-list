@@ -84,6 +84,10 @@ img {
   margin-bottom: 16px;
 }
 
+.logoImg_nav {
+  height: 30px;
+}
+
 .vhContainer {
   height: 100vh;
 }
@@ -369,7 +373,8 @@ nav ul a span {
 
 .todoList_Content {
   width: 500px;
-  margin: 0 auto;
+  margin: 40px auto;
+  
 }
 
 @media (max-width: 576px) {
@@ -455,8 +460,10 @@ nav ul a span {
 .todoList_list .todoList_items {
   padding-top: 23px;
   padding-left: 24px;
-  padding-right: 17px;
+  padding-right: 24px;
   padding-bottom: 32px;
+  height: 50vh; /* 固定高度 */
+  overflow-y: auto; /* 允許垂直捲動 */
 }
 
 .todoList_list .todoList_items .todoList_item {
@@ -471,7 +478,6 @@ nav ul a span {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  border-bottom: 1px solid #e5e5e5;
   padding-bottom: 15px;
   color: #333333;
   line-height: 20.27px;
@@ -500,14 +506,18 @@ nav ul a span {
       -ms-flex-align: center;
           align-items: center;
   margin-bottom: 17px;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 .todoList_list .todoList_items li a {
-  margin-left: 17px;
+  margin: 0 0 15px 17px;
   display: block;
-  font-size: 14px;
+  font-size: 18px;
   color: #333333;
   opacity: 0;
+  :hover {
+    color: #daa11d;
+  }
 }
 
 .todoList_list .todoList_items li:hover a {

@@ -1,6 +1,6 @@
 <script setup>
 import SideBanner from '@/components/SideBanner.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { errorHandler, Toast, validator } from '@/utils'
 import { useAuthStore } from '@/stores/auth'
@@ -34,6 +34,11 @@ const handleLogin = async () => {
     errorHandler(error)
   }
 }
+
+onMounted(async() => {
+  await authStore.authCheck()
+  if (authStore.status) router.push('/todo')
+})
 </script>
 
 <template>
