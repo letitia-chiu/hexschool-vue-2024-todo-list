@@ -1,4 +1,4 @@
-import { Toast } from '@/utils'
+import { cookie, Toast } from '@/utils'
 
 const errorHandler = (error) => {
   console.error(error)
@@ -8,6 +8,7 @@ const errorHandler = (error) => {
     let errMsg = `錯誤：${message}`
     if (message === '驗證失效') {
       errMsg = '驗證失效，請重新登入'
+      cookie.delete()
     }
     Toast('error', errMsg)
   } else {

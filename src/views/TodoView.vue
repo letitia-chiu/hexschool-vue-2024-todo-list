@@ -9,12 +9,45 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const todos = ref([])
+// 切換「全部／待完成／已完成」分頁
+const currentTab = ref('all')
+const activeTab = ref({
+  all: 'active',
+  todo: '',
+  done: ''
+})
 
-const newTodoContent = ref('')
+/**
+ * 切換分頁
+ * @param {'all' | 'todo' | 'done'} tab 
+ */
+const switchTab = (tab) => {
+  Object.keys(activeTab.value).forEach(key => {
+    activeTab.value[key] = key === tab ? 'active' : ''
+  })
+  currentTab.value = tab
+}
+
+// Todos 資料
+const todos = ref([])
+const filteredTodos = computed(() => {
+  if (currentTab.value === 'todo') {
+    return todos.value.filter(todo => todo.status === false)
+  } else if (currentTab.value === 'done') {
+    return todos.value.filter(todo => todo.status === true)
+  } else {
+    return todos.value
+  }
+})
+// 計算已完成數量
+const doneCount = computed(() => {
+  return todos.value.filter(todo => todo.status).length
+})
+
 // const edittingTodo = ref()
 // const edittingContent = ref('')
 
+// 取得 todos
 async function getTodos() {
   try {
     const { data } = await api.todos.get()
@@ -24,6 +57,8 @@ async function getTodos() {
   }
 }
 
+// 新增 todo
+const newTodoContent = ref('')
 async function addTodo() {
   try {
     const content = newTodoContent.value.trim()
@@ -31,7 +66,6 @@ async function addTodo() {
       Toast('warning', 'Todo內容不能為空白')
       return (newTodoContent.value = '')
     }
-
     await api.todos.post(content)
     newTodoContent.value = ''
     getTodos()
@@ -40,6 +74,7 @@ async function addTodo() {
   }
 }
 
+// 切換 todo 狀態
 async function toggleTodo(todo) {
   try {
     await api.todos.toggle(todo.id)
@@ -53,6 +88,7 @@ async function toggleTodo(todo) {
   }
 }
 
+// 刪除 todo
 async function deleteTodo(todo) {
   try {
     await api.todos.delete(todo.id) // 刪除 API
@@ -63,16 +99,14 @@ async function deleteTodo(todo) {
   }
 }
 
+// 登出
 async function handleLogout() {
   await authStore.logout()
   Toast('success', '您已登出')
   router.push('/login')
 }
 
-const doneCount = computed(() => {
-  return todos.value.filter(todo => todo.status).length
-})
-
+// 頁面掛載時，驗證登入狀態並取得資料
 onMounted(async () => {
   try {
     await authStore.authCheck() // 驗證登入狀態
@@ -112,14 +146,14 @@ onMounted(async () => {
         </div>
         <div class="todoList_list">
           <ul class="todoList_tab">
-            <li><a href="#" class="active">全部</a></li>
-            <li><a href="#">待完成</a></li>
-            <li><a href="#">已完成</a></li>
+            <li><a href="#" :class="activeTab.all" @click.prevent="switchTab('all')">全部</a></li>
+            <li><a href="#" :class="activeTab.todo" @click.prevent="switchTab('todo')">待完成</a></li>
+            <li><a href="#" :class="activeTab.done" @click.prevent="switchTab('done')">已完成</a></li>
           </ul>
           <div class="todoList_items">
             <p v-if="todos.length === 0">目前尚無待辦事項</p>
             <ul class="todoList_item">
-              <li v-for="todo in todos" :key="todo.id">
+              <li v-for="todo in filteredTodos" :key="todo.id">
                 <label class="todoList_label">
                   <input class="todoList_input" type="checkbox" v-model="todo.status" @change="toggleTodo(todo)"/>
                   <span>{{ todo.content }}</span>
