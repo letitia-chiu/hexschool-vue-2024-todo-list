@@ -44,9 +44,6 @@ const doneCount = computed(() => {
   return todos.value.filter(todo => todo.status).length
 })
 
-// const edittingTodo = ref()
-// const edittingContent = ref('')
-
 // 取得 todos
 async function getTodos() {
   try {
@@ -94,6 +91,31 @@ async function deleteTodo(todo) {
     await api.todos.delete(todo.id) // 刪除 API
     getTodos() // 刷新資料
     Toast('success', `已刪除：${todo.content}`)
+  } catch (error) {
+    errorHandler(error)
+  }
+}
+
+// 編輯 todo
+const edittingTodo = ref()
+const edittingContent = ref('')
+
+function editTodo(todo) {
+  edittingTodo.value = todo
+  edittingContent.value = todo.content
+}
+
+async function saveEdit(todo) {
+  try {
+    // 如果內容沒有差異，則不 call API 更新
+    if (todo.content === edittingContent.value) {
+      return (edittingTodo.value = null)
+    }
+
+    await api.todos.put(todo.id, edittingContent.value) // API 更新 Todo
+    edittingTodo.value = null // 清空編輯狀態
+    await getTodos() // 刷新資料
+    Toast('success', '更新成功')
   } catch (error) {
     errorHandler(error)
   }
@@ -154,16 +176,33 @@ onMounted(async () => {
             <p v-if="todos.length === 0">目前尚無待辦事項</p>
             <ul class="todoList_item">
               <li v-for="todo in filteredTodos" :key="todo.id">
-                <label class="todoList_label">
+                <label class="todoList_label" v-if="edittingTodo && edittingTodo.id === todo.id">
+                  <input 
+                    class="todoList_input_edit"
+                    type="text"
+                    v-model="edittingContent"
+                  />
+                </label>
+                <label class="todoList_label" v-else>
                   <input class="todoList_input" type="checkbox" v-model="todo.status" @change="toggleTodo(todo)"/>
                   <span>{{ todo.content }}</span>
                 </label>
-                <a href="#" @click.prevent="">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </a>
-                <a href="#" @click.prevent="deleteTodo(todo)">
-                  <i class="fa-solid fa-delete-left"></i>
-                </a>
+                <div class="todo_btn_group edit_btn_group" v-if="edittingTodo && edittingTodo.id === todo.id">
+                  <a href="#" @click.prevent="saveEdit(todo)">
+                    <i class="fa-solid fa-circle-check fa-lg"></i>
+                  </a>
+                  <a href="#" @click.prevent="edittingTodo = null">
+                    <i class="fa-solid fa-circle-xmark fa-lg"></i>
+                  </a>
+                </div>
+                <div class="todo_btn_group nomal_btn_group" v-else>
+                  <a href="#" @click.prevent="editTodo(todo)">
+                    <i class="fa-solid fa-pen-to-square fa-lg"></i>
+                  </a>
+                  <a href="#" @click.prevent="deleteTodo(todo)">
+                    <i class="fa-solid fa-trash-can fa-lg"></i>
+                  </a>
+                </div>
               </li>
             </ul>
             <div class="todoList_statistics" v-if="todos.length > 0">
