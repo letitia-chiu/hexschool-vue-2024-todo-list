@@ -39,9 +39,9 @@ const filteredTodos = computed(() => {
     return todos.value
   }
 })
-// 計算已完成數量
-const doneCount = computed(() => {
-  return todos.value.filter(todo => todo.status).length
+// 計算待完成數量
+const todoCount = computed(() => {
+  return todos.value.filter(todo => !todo.status).length
 })
 
 // 取得 todos
@@ -66,6 +66,7 @@ async function addTodo() {
     await api.todos.post(content)
     newTodoContent.value = ''
     getTodos()
+    switchTab('all')
   } catch (error) {
     errorHandler(error)
   }
@@ -206,7 +207,7 @@ onMounted(async () => {
               </li>
             </ul>
             <div class="todoList_statistics" v-if="todos.length > 0">
-              <p>{{ doneCount }} 個已完成項目</p>
+              <p>{{ todoCount }} 個待完成項目</p>
             </div>
           </div>
         </div>
