@@ -1,35 +1,19 @@
-# final-hw
+# 六角學院 2024 Vue 前端新手營-最終挑戰
+六角學院 2024 Vue 前端新手營
+最終挑戰 - Todolist API 整合證書任務
 
-This template should help get you started developing with Vue 3 in Vite.
+## Features
+### 任務基本要求
+* 需使用 Vue 框架來挑戰，並整合此任務提供的 API
+* 需使用 Vue Router，並統一部署到 GitHub Pages
+* 待辦為零筆資料時，需顯示文字「目前尚無待辦事項」
+* 新增待辦功能
+* 移除待辦功能
+* 切換待辦狀態(打勾表示已完成、未勾表示待完成)
+* 狀態頁籤切換功能(全部、待完成、已完成)
+* 確認待完成項目總數 (5 個待完成項目)
+* 登入、註冊 API 功能
+* 需處理重複帳號註冊時， API 回傳錯誤時，需提醒用戶。(例：alert 彈跳、紅色文字顯示、SweetAlert2)
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+### 額外功能
+* 編輯待辦功能
